@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import Sidebar from '../../components/Sidebar'
+import Header from '../../components/Header'
 import axios from 'axios'
 
 export default function InstructorDashboard() {
@@ -8,6 +9,7 @@ export default function InstructorDashboard() {
   const [courses, setCourses] = useState([])
   const [recentActivity, setRecentActivity] = useState([])
   const [loading, setLoading] = useState(true)
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
   const router = useRouter()
 
   useEffect(() => {
@@ -102,35 +104,85 @@ export default function InstructorDashboard() {
   if (loading) return <div>Loading...</div>
 
   return (
-    <div className="flex">
-      <Sidebar role="instructor" active="Dashboard" />
-      <div className="flex-1 p-8">
+    <div className="flex bg-gray-50 min-h-screen">
+      <Sidebar role="instructor" active="Dashboard" isCollapsed={isSidebarCollapsed} />
+      <div className="flex-1 flex flex-col">
+        <Header role="instructor" userName="Instructor User" onToggleSidebar={() => setIsSidebarCollapsed(!isSidebarCollapsed)} />
+        <div className="flex-1 p-8 bg-gradient-to-br from-green-50 to-emerald-50">
+
+        {/* Welcome Section */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">Instructor Dashboard</h1>
-          <p className="text-gray-600">Welcome back! Here's an overview of your courses and students.</p>
+          <div className="bg-gradient-to-r from-green-600 to-emerald-600 rounded-2xl p-8 text-white shadow-xl">
+            <div className="flex items-center justify-between">
+              <div>
+                <h1 className="text-3xl font-bold mb-2">Instructor Dashboard</h1>
+                <p className="text-green-100 text-lg">Create and manage your courses</p>
+              </div>
+              <div className="hidden md:block">
+                <div className="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center">
+                  <span className="text-4xl">👨‍🏫</span>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
-          <div className="bg-white p-6 rounded-lg shadow-md">
-            <h3 className="text-lg font-semibold mb-2">Total Courses</h3>
-            <p className="text-3xl font-bold text-blue-600">{stats.totalCourses}</p>
+          <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-lg font-semibold text-gray-700 mb-1">Total Courses</h3>
+                <p className="text-3xl font-bold text-blue-600">{stats.totalCourses}</p>
+              </div>
+              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                <span className="text-2xl">📚</span>
+              </div>
+            </div>
           </div>
-          <div className="bg-white p-6 rounded-lg shadow-md">
-            <h3 className="text-lg font-semibold mb-2">Total Students</h3>
-            <p className="text-3xl font-bold text-green-600">{stats.totalStudents.toLocaleString()}</p>
+          <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-lg font-semibold text-gray-700 mb-1">Total Students</h3>
+                <p className="text-3xl font-bold text-green-600">{stats.totalStudents.toLocaleString()}</p>
+              </div>
+              <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                <span className="text-2xl">🎓</span>
+              </div>
+            </div>
           </div>
-          <div className="bg-white p-6 rounded-lg shadow-md">
-            <h3 className="text-lg font-semibold mb-2">Revenue</h3>
-            <p className="text-3xl font-bold text-purple-600">${stats.totalRevenue.toLocaleString()}</p>
+          <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-lg font-semibold text-gray-700 mb-1">Revenue</h3>
+                <p className="text-3xl font-bold text-purple-600">${stats.totalRevenue.toLocaleString()}</p>
+              </div>
+              <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                <span className="text-2xl">💰</span>
+              </div>
+            </div>
           </div>
-          <div className="bg-white p-6 rounded-lg shadow-md">
-            <h3 className="text-lg font-semibold mb-2">Avg Rating</h3>
-            <p className="text-3xl font-bold text-yellow-600">⭐ {stats.avgRating}</p>
+          <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-lg font-semibold text-gray-700 mb-1">Avg Rating</h3>
+                <p className="text-3xl font-bold text-yellow-600">⭐ {stats.avgRating}</p>
+              </div>
+              <div className="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
+                <span className="text-2xl">⭐</span>
+              </div>
+            </div>
           </div>
-          <div className="bg-white p-6 rounded-lg shadow-md">
-            <h3 className="text-lg font-semibold mb-2">Completion Rate</h3>
-            <p className="text-3xl font-bold text-indigo-600">{stats.completionRate}%</p>
+          <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-lg font-semibold text-gray-700 mb-1">Completion Rate</h3>
+                <p className="text-3xl font-bold text-indigo-600">{stats.completionRate}%</p>
+              </div>
+              <div className="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center">
+                <span className="text-2xl">📈</span>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -222,6 +274,7 @@ export default function InstructorDashboard() {
               <div className="font-semibold">Analytics</div>
             </button>
           </div>
+        </div>
         </div>
       </div>
     </div>

@@ -1,12 +1,11 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import Sidebar from '../../components/Sidebar'
+import Header from '../../components/Header'
 import axios from 'axios'
 
 export default function StudentDiscussions() {
   const [discussions, setDiscussions] = useState([])
-  const [activeDiscussion, setActiveDiscussion] = useState(null)
-  const [newPost, setNewPost] = useState('')
   const [loading, setLoading] = useState(true)
   const router = useRouter()
 
@@ -20,54 +19,43 @@ export default function StudentDiscussions() {
 
     const fetchDiscussions = async () => {
       try {
-        // Mock discussion data - in real app, this would come from API
-        const mockDiscussions = [
+        // Assuming there's an API endpoint for discussions
+        const response = await axios.get('/api/discussions', {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        setDiscussions(response.data)
+      } catch (err) {
+        console.error('Failed to fetch discussions', err)
+        // For demo purposes, set some mock data
+        setDiscussions([
           {
             id: 1,
-            courseTitle: 'Introduction to React',
-            title: 'Help with useEffect hook',
-            author: 'John Doe',
-            timestamp: '2023-05-15T10:30:00Z',
-            replies: 5,
-            lastReply: '2023-05-15T14:20:00Z',
-            content: 'I\'m having trouble understanding when useEffect runs. Can someone explain the dependency array?',
-            replies: [
-              {
-                id: 1,
-                author: 'Jane Smith',
-                content: 'The dependency array tells React when to re-run the effect. If it\'s empty [], it runs once after mount.',
-                timestamp: '2023-05-15T11:00:00Z'
-              },
-              {
-                id: 2,
-                author: 'Mike Johnson',
-                content: 'You can also pass specific values to watch for changes.',
-                timestamp: '2023-05-15T12:30:00Z'
-              }
-            ]
+            title: 'Understanding React Hooks',
+            course: 'Advanced React Development',
+            author: 'Sarah Johnson',
+            replies: 12,
+            lastActivity: '2 hours ago',
+            category: 'Technical Questions'
           },
           {
             id: 2,
-            courseTitle: 'Advanced JavaScript',
-            title: 'Promises vs Async/Await',
-            author: 'Sarah Wilson',
-            timestamp: '2023-05-14T09:15:00Z',
-            replies: 3,
-            lastReply: '2023-05-14T16:45:00Z',
-            content: 'When should I use promises vs async/await? Are there performance differences?',
-            replies: [
-              {
-                id: 3,
-                author: 'Tom Brown',
-                content: 'Async/await is syntactic sugar over promises. Use whatever is more readable for your use case.',
-                timestamp: '2023-05-14T10:20:00Z'
-              }
-            ]
+            title: 'Best practices for CSS Grid',
+            course: 'Modern CSS Techniques',
+            author: 'Mike Chen',
+            replies: 8,
+            lastActivity: '1 day ago',
+            category: 'Tips & Tricks'
+          },
+          {
+            id: 3,
+            title: 'Project collaboration ideas',
+            course: 'Team Development',
+            author: 'Alex Rodriguez',
+            replies: 15,
+            lastActivity: '3 days ago',
+            category: 'General Discussion'
           }
-        ]
-        setDiscussions(mockDiscussions)
-      } catch (err) {
-        console.error('Failed to fetch discussions', err)
+        ])
       } finally {
         setLoading(false)
       }
@@ -76,154 +64,192 @@ export default function StudentDiscussions() {
     fetchDiscussions()
   }, [router])
 
-  const handleNewPost = (e) => {
-    e.preventDefault()
-    if (!newPost.trim()) return
-
-    // In real app, this would submit to API
-    const newDiscussion = {
-      id: discussions.length + 1,
-      courseTitle: 'General',
-      title: 'New Question',
-      author: 'John Doe',
-      timestamp: new Date().toISOString(),
-      replies: 0,
-      lastReply: new Date().toISOString(),
-      content: newPost,
-      replies: []
-    }
-
-    setDiscussions([newDiscussion, ...discussions])
-    setNewPost('')
+  if (loading) {
+    return (
+      <div className="flex bg-neutral-50 min-h-screen">
+        <Sidebar role="student" active="Discussions" />
+        <div className="flex-1 flex items-center justify-center">
+          <div className="text-center">
+            <div className="w-12 h-12 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin mx-auto mb-4"></div>
+            <p className="text-neutral-600">Loading discussions...</p>
+          </div>
+        </div>
+      </div>
+    )
   }
 
-  if (loading) return <div>Loading...</div>
-
   return (
-    <div className="flex">
+    <div className="flex bg-neutral-50 min-h-screen">
       <Sidebar role="student" active="Discussions" />
-      <div className="flex-1 p-8">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold">Course Discussions</h1>
-          <button
-            onClick={() => setActiveDiscussion(null)}
-            className="bg-indigo-600 text-white py-2 px-4 rounded hover:bg-indigo-700"
-          >
-            New Discussion
-          </button>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Discussion List */}
-          <div className="lg:col-span-1">
-            <div className="bg-white rounded-lg shadow-md">
-              <div className="p-4 border-b">
-                <h2 className="text-lg font-semibold">Discussions</h2>
+      <div className="flex-1 flex flex-col">
+        <Header role="student" userName="John Doe" />
+        <div className="flex-1 p-8">
+          {/* Header */}
+          <div className="page-header">
+            <div className="flex items-center justify-between">
+              <div>
+                <h1 className="page-title">Discussions 💬</h1>
+                <p className="page-subtitle">Connect with fellow learners and instructors</p>
               </div>
-              <div className="max-h-96 overflow-y-auto">
-                {discussions.map((discussion) => (
-                  <div
-                    key={discussion.id}
-                    onClick={() => setActiveDiscussion(discussion)}
-                    className={`p-4 border-b cursor-pointer hover:bg-gray-50 ${
-                      activeDiscussion?.id === discussion.id ? 'bg-blue-50' : ''
-                    }`}
-                  >
-                    <h3 className="font-semibold text-sm mb-1">{discussion.title}</h3>
-                    <p className="text-xs text-gray-600 mb-1">{discussion.courseTitle}</p>
-                    <div className="flex justify-between text-xs text-gray-500">
-                      <span>{discussion.author}</span>
-                      <span>{discussion.replies.length} replies</span>
-                    </div>
-                  </div>
-                ))}
+              <button className="btn-primary">
+                Start New Discussion
+              </button>
+            </div>
+          </div>
+
+          {/* Stats Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div className="stat-card card-hover">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-lg font-semibold text-neutral-700 mb-1">Total Discussions</h3>
+                  <p className="text-3xl font-bold text-primary-600">{discussions.length}</p>
+                  <p className="text-sm text-neutral-500 mt-1">Active conversations</p>
+                </div>
+                <div className="w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center">
+                  <span className="text-2xl">💬</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="stat-card card-hover">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-lg font-semibold text-neutral-700 mb-1">Your Posts</h3>
+                  <p className="text-3xl font-bold text-secondary-600">5</p>
+                  <p className="text-sm text-neutral-500 mt-1">Contributions made</p>
+                </div>
+                <div className="w-12 h-12 bg-secondary-100 rounded-lg flex items-center justify-center">
+                  <span className="text-2xl">✍️</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="stat-card card-hover">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-lg font-semibold text-neutral-700 mb-1">Replies Received</h3>
+                  <p className="text-3xl font-bold text-accent-600">23</p>
+                  <p className="text-sm text-neutral-500 mt-1">Community engagement</p>
+                </div>
+                <div className="w-12 h-12 bg-accent-100 rounded-lg flex items-center justify-center">
+                  <span className="text-2xl">❤️</span>
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Discussion Detail / New Post */}
-          <div className="lg:col-span-2">
-            {activeDiscussion ? (
-              <div className="bg-white p-6 rounded-lg shadow-md">
-                <div className="border-b pb-4 mb-4">
-                  <h2 className="text-xl font-semibold mb-2">{activeDiscussion.title}</h2>
-                  <p className="text-gray-600 mb-2">{activeDiscussion.courseTitle}</p>
-                  <div className="flex justify-between text-sm text-gray-500">
-                    <span>Posted by {activeDiscussion.author}</span>
-                    <span>{new Date(activeDiscussion.timestamp).toLocaleString()}</span>
-                  </div>
-                </div>
-
-                <div className="mb-6">
-                  <p className="text-gray-800">{activeDiscussion.content}</p>
-                </div>
-
-                <div className="space-y-4">
-                  <h3 className="font-semibold">Replies ({activeDiscussion.replies.length})</h3>
-                  {activeDiscussion.replies.map((reply) => (
-                    <div key={reply.id} className="bg-gray-50 p-4 rounded">
-                      <div className="flex justify-between text-sm text-gray-500 mb-2">
-                        <span>{reply.author}</span>
-                        <span>{new Date(reply.timestamp).toLocaleString()}</span>
-                      </div>
-                      <p className="text-gray-800">{reply.content}</p>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="mt-6">
-                  <textarea
-                    placeholder="Write a reply..."
-                    className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                    rows={4}
-                  />
-                  <button className="mt-2 bg-indigo-600 text-white py-2 px-4 rounded hover:bg-indigo-700">
-                    Post Reply
-                  </button>
-                </div>
+          {/* Discussions List */}
+          <div className="card p-6">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-bold text-neutral-900">Recent Discussions</h2>
+              <div className="flex space-x-2">
+                <select className="px-3 py-2 border border-neutral-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500">
+                  <option>All Categories</option>
+                  <option>Technical Questions</option>
+                  <option>Tips & Tricks</option>
+                  <option>General Discussion</option>
+                </select>
+                <select className="px-3 py-2 border border-neutral-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500">
+                  <option>Most Recent</option>
+                  <option>Most Replies</option>
+                  <option>Unanswered</option>
+                </select>
               </div>
-            ) : (
-              <div className="bg-white p-6 rounded-lg shadow-md">
-                <h2 className="text-xl font-semibold mb-4">Start a New Discussion</h2>
-                <form onSubmit={handleNewPost}>
-                  <div className="mb-4">
-                    <label className="block text-gray-700 text-sm font-bold mb-2">Topic</label>
-                    <input
-                      type="text"
-                      placeholder="What's your question or topic?"
-                      className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                      required
-                    />
+            </div>
+
+            <div className="space-y-4">
+              {discussions.map((discussion) => (
+                <div key={discussion.id} className="border border-neutral-200 rounded-lg p-4 hover:bg-neutral-50 transition-colors cursor-pointer">
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <div className="flex items-center space-x-2 mb-2">
+                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                          discussion.category === 'Technical Questions' ? 'bg-primary-100 text-primary-700' :
+                          discussion.category === 'Tips & Tricks' ? 'bg-secondary-100 text-secondary-700' :
+                          'bg-accent-100 text-accent-700'
+                        }`}>
+                          {discussion.category}
+                        </span>
+                        <span className="text-sm text-neutral-500">in {discussion.course}</span>
+                      </div>
+                      <h3 className="text-lg font-semibold text-neutral-900 mb-2 hover:text-primary-600 transition-colors">
+                        {discussion.title}
+                      </h3>
+                      <div className="flex items-center space-x-4 text-sm text-neutral-600">
+                        <span>By {discussion.author}</span>
+                        <span>{discussion.replies} replies</span>
+                        <span>Last activity {discussion.lastActivity}</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <button className="text-neutral-400 hover:text-neutral-600 transition-colors">
+                        <span className="text-lg">👍</span>
+                      </button>
+                      <button className="text-neutral-400 hover:text-neutral-600 transition-colors">
+                        <span className="text-lg">📌</span>
+                      </button>
+                    </div>
                   </div>
-                  <div className="mb-4">
-                    <label className="block text-gray-700 text-sm font-bold mb-2">Course (Optional)</label>
-                    <select className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                      <option value="">General Discussion</option>
-                      <option value="react">Introduction to React</option>
-                      <option value="js">Advanced JavaScript</option>
-                      <option value="dsa">Data Structures and Algorithms</option>
-                    </select>
-                  </div>
-                  <div className="mb-4">
-                    <label className="block text-gray-700 text-sm font-bold mb-2">Message</label>
-                    <textarea
-                      value={newPost}
-                      onChange={(e) => setNewPost(e.target.value)}
-                      placeholder="Describe your question or share your thoughts..."
-                      className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                      rows={6}
-                      required
-                    />
-                  </div>
-                  <button
-                    type="submit"
-                    className="bg-indigo-600 text-white py-2 px-4 rounded hover:bg-indigo-700"
-                  >
-                    Post Discussion
-                  </button>
-                </form>
+                </div>
+              ))}
+            </div>
+
+            {discussions.length === 0 && (
+              <div className="text-center py-12">
+                <div className="w-16 h-16 bg-neutral-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <span className="text-2xl">💬</span>
+                </div>
+                <h3 className="text-lg font-semibold text-neutral-900 mb-2">No discussions yet</h3>
+                <p className="text-neutral-600 mb-4">Be the first to start a conversation!</p>
+                <button className="btn-primary">
+                  Start New Discussion
+                </button>
               </div>
             )}
+          </div>
+
+          {/* Quick Actions */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+            <div className="card p-6">
+              <h3 className="text-lg font-semibold text-neutral-900 mb-4">Discussion Guidelines</h3>
+              <ul className="space-y-2 text-sm text-neutral-600">
+                <li className="flex items-start space-x-2">
+                  <span className="text-primary-500 mt-1">•</span>
+                  <span>Be respectful and constructive in your comments</span>
+                </li>
+                <li className="flex items-start space-x-2">
+                  <span className="text-primary-500 mt-1">•</span>
+                  <span>Use clear and descriptive titles for new discussions</span>
+                </li>
+                <li className="flex items-start space-x-2">
+                  <span className="text-primary-500 mt-1">•</span>
+                  <span>Search existing discussions before posting</span>
+                </li>
+                <li className="flex items-start space-x-2">
+                  <span className="text-primary-500 mt-1">•</span>
+                  <span>Share knowledge and help others learn</span>
+                </li>
+              </ul>
+            </div>
+
+            <div className="card p-6">
+              <h3 className="text-lg font-semibold text-neutral-900 mb-4">Popular Topics</h3>
+              <div className="space-y-3">
+                <div className="flex items-center justify-between p-3 bg-primary-50 rounded-lg">
+                  <span className="text-sm font-medium text-neutral-900">React Best Practices</span>
+                  <span className="text-xs text-neutral-500">18 discussions</span>
+                </div>
+                <div className="flex items-center justify-between p-3 bg-secondary-50 rounded-lg">
+                  <span className="text-sm font-medium text-neutral-900">JavaScript Fundamentals</span>
+                  <span className="text-xs text-neutral-500">15 discussions</span>
+                </div>
+                <div className="flex items-center justify-between p-3 bg-accent-50 rounded-lg">
+                  <span className="text-sm font-medium text-neutral-900">CSS Layout Techniques</span>
+                  <span className="text-xs text-neutral-500">12 discussions</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

@@ -1,12 +1,14 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import Sidebar from '../../components/Sidebar'
+import Header from '../../components/Header'
 import axios from 'axios'
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState({})
   const [recentActivity, setRecentActivity] = useState([])
   const [loading, setLoading] = useState(true)
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
   const router = useRouter()
 
   useEffect(() => {
@@ -84,56 +86,79 @@ export default function AdminDashboard() {
   if (loading) return <div>Loading...</div>
 
   return (
-    <div className="flex">
-      <Sidebar role="admin" active="Dashboard" />
-      <div className="flex-1 p-8">
+    <div className="flex bg-gray-50 min-h-screen">
+      <Sidebar role="admin" active="Dashboard" isCollapsed={isSidebarCollapsed} />
+      <div className="flex-1 flex flex-col">
+        <Header role="admin" userName="Admin User" onToggleSidebar={() => setIsSidebarCollapsed(!isSidebarCollapsed)} />
+        <div className="flex-1 p-8 bg-gradient-to-br from-blue-50 to-indigo-50">
+
+        {/* Welcome Section */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">Admin Dashboard</h1>
-          <p className="text-gray-600">Welcome back! Here's an overview of your LMS platform.</p>
+          <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-8 text-white shadow-xl">
+            <div className="flex items-center justify-between">
+              <div>
+                <h1 className="text-3xl font-bold mb-2">Admin Dashboard</h1>
+                <p className="text-blue-100 text-lg">Monitor and manage your learning platform</p>
+              </div>
+              <div className="hidden md:block">
+                <div className="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center">
+                  <span className="text-4xl">📊</span>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Key Metrics */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white p-6 rounded-lg shadow-md">
+          <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-lg font-semibold mb-1">Total Users</h3>
+                <h3 className="text-lg font-semibold text-gray-700 mb-1">Total Users</h3>
                 <p className="text-3xl font-bold text-blue-600">{stats.totalUsers?.toLocaleString()}</p>
               </div>
-              <div className="text-3xl">👥</div>
+              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                <span className="text-2xl">👥</span>
+              </div>
             </div>
             <p className="text-sm text-gray-500 mt-2">+{stats.monthlyGrowth}% this month</p>
           </div>
 
-          <div className="bg-white p-6 rounded-lg shadow-md">
+          <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-lg font-semibold mb-1">Students</h3>
+                <h3 className="text-lg font-semibold text-gray-700 mb-1">Students</h3>
                 <p className="text-3xl font-bold text-green-600">{stats.totalStudents?.toLocaleString()}</p>
               </div>
-              <div className="text-3xl">🎓</div>
+              <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                <span className="text-2xl">🎓</span>
+              </div>
             </div>
             <p className="text-sm text-gray-500 mt-2">{stats.totalInstructors} instructors</p>
           </div>
 
-          <div className="bg-white p-6 rounded-lg shadow-md">
+          <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-lg font-semibold mb-1">Total Courses</h3>
+                <h3 className="text-lg font-semibold text-gray-700 mb-1">Total Courses</h3>
                 <p className="text-3xl font-bold text-purple-600">{stats.totalCourses}</p>
               </div>
-              <div className="text-3xl">📚</div>
+              <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                <span className="text-2xl">📚</span>
+              </div>
             </div>
             <p className="text-sm text-gray-500 mt-2">⭐ {stats.avgRating} avg rating</p>
           </div>
 
-          <div className="bg-white p-6 rounded-lg shadow-md">
+          <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-lg font-semibold mb-1">Revenue</h3>
+                <h3 className="text-lg font-semibold text-gray-700 mb-1">Revenue</h3>
                 <p className="text-3xl font-bold text-yellow-600">${stats.totalRevenue?.toLocaleString()}</p>
               </div>
-              <div className="text-3xl">💰</div>
+              <div className="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
+                <span className="text-2xl">💰</span>
+              </div>
             </div>
             <p className="text-sm text-gray-500 mt-2">{stats.activeSubscriptions} active subs</p>
           </div>
@@ -209,6 +234,7 @@ export default function AdminDashboard() {
               <div className="font-semibold">System Settings</div>
             </button>
           </div>
+        </div>
         </div>
       </div>
     </div>
