@@ -1,114 +1,36 @@
-import { useEffect, useState } from 'react'
-import { useRouter } from 'next/router'
-import Sidebar from '../../components/Sidebar'
-import axios from 'axios'
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
+import Sidebar from '../../components/Sidebar';
+import axios from 'axios';
 
 export default function AdminPayments() {
-  const [payments, setPayments] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [activeTab, setActiveTab] = useState('all')
-  const [searchTerm, setSearchTerm] = useState('')
-  const router = useRouter()
+  const [payments, setPayments] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState('all');
+  const [searchTerm, setSearchTerm] = useState('');
+  const router = useRouter();
 
   useEffect(() => {
-    const token = localStorage.getItem('token')
-    const role = localStorage.getItem('role')
+    const token = localStorage.getItem('token');
+    const role = localStorage.getItem('role');
     if (!token || role !== 'admin') {
-      router.push('/login')
-      return
+      router.push('/login');
+      return;
     }
 
     const fetchPaymentsData = async () => {
       try {
-        // Mock payments data - in real app, this would come from API
-        const mockPayments = [
-          {
-            id: 1,
-            transactionId: 'TXN_001234',
-            student: 'John Doe',
-            studentEmail: 'john.doe@example.com',
-            course: 'Advanced React Development',
-            instructor: 'Dr. Sarah Johnson',
-            amount: 199.99,
-            platformFee: 39.99,
-            instructorShare: 160.00,
-            status: 'completed',
-            paymentMethod: 'Credit Card',
-            date: '2023-05-15T10:30:00Z',
-            refundable: true
-          },
-          {
-            id: 2,
-            transactionId: 'TXN_001235',
-            student: 'Jane Smith',
-            studentEmail: 'jane.smith@example.com',
-            course: 'Python for Data Science',
-            instructor: 'Dr. Michael Chen',
-            amount: 249.99,
-            platformFee: 49.99,
-            instructorShare: 200.00,
-            status: 'completed',
-            paymentMethod: 'PayPal',
-            date: '2023-05-14T14:20:00Z',
-            refundable: true
-          },
-          {
-            id: 3,
-            transactionId: 'TXN_001236',
-            student: 'Mike Johnson',
-            studentEmail: 'mike.johnson@example.com',
-            course: 'UI/UX Design Fundamentals',
-            instructor: 'Dr. Sarah Johnson',
-            amount: 149.99,
-            platformFee: 29.99,
-            instructorShare: 120.00,
-            status: 'completed',
-            paymentMethod: 'Credit Card',
-            date: '2023-05-13T09:15:00Z',
-            refundable: true
-          },
-          {
-            id: 4,
-            transactionId: 'TXN_001237',
-            student: 'Sarah Wilson',
-            studentEmail: 'sarah.wilson@example.com',
-            course: 'Python for Data Science',
-            instructor: 'Dr. Michael Chen',
-            amount: 249.99,
-            platformFee: 49.99,
-            instructorShare: 200.00,
-            status: 'refunded',
-            paymentMethod: 'Credit Card',
-            date: '2023-05-12T16:45:00Z',
-            refundable: false
-          },
-          {
-            id: 5,
-            transactionId: 'TXN_001238',
-            student: 'David Brown',
-            studentEmail: 'david.brown@example.com',
-            course: 'Cloud Computing with AWS',
-            instructor: 'Prof. David Kim',
-            amount: 349.99,
-            platformFee: 69.99,
-            instructorShare: 280.00,
-            status: 'pending',
-            paymentMethod: 'Bank Transfer',
-            date: '2023-05-11T11:30:00Z',
-            refundable: false
-          }
-        ]
-
-        setPayments(mockPayments)
+        const response = await axios.get('/api/admin/payments');
+        setPayments(response.data);
       } catch (err) {
-        console.error('Failed to fetch payments data', err)
+        console.error('Failed to fetch payments data', err);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
+    };
 
-    fetchPaymentsData()
-  }, [router])
+    fetchPaymentsData();
+  }, [router]);
 
   const filteredPayments = payments.filter(payment => {
     const matchesSearch = payment.student.toLowerCase().includes(searchTerm.toLowerCase()) ||

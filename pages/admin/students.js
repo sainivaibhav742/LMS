@@ -1,115 +1,36 @@
-import { useEffect, useState } from 'react'
-import { useRouter } from 'next/router'
-import Sidebar from '../../components/Sidebar'
-import axios from 'axios'
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
+import Sidebar from '../../components/Sidebar';
+import axios from 'axios';
 
 export default function AdminStudents() {
-  const [students, setStudents] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [searchTerm, setSearchTerm] = useState('')
-  const [selectedStatus, setSelectedStatus] = useState('all')
-  const router = useRouter()
+  const [students, setStudents] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedStatus, setSelectedStatus] = useState('all');
+  const router = useRouter();
 
   useEffect(() => {
-    const token = localStorage.getItem('token')
-    const role = localStorage.getItem('role')
+    const token = localStorage.getItem('token');
+    const role = localStorage.getItem('role');
     if (!token || role !== 'admin') {
-      router.push('/login')
-      return
+      router.push('/login');
+      return;
     }
 
     const fetchStudentsData = async () => {
       try {
-        // Mock students data - in real app, this would come from API
-        const mockStudents = [
-          {
-            id: 1,
-            name: 'John Doe',
-            email: 'john.doe@example.com',
-            avatar: 'https://via.placeholder.com/40x40?text=JD',
-            enrolledCourses: 3,
-            completedCourses: 2,
-            totalSpent: 499.97,
-            joinDate: '2023-01-15',
-            lastActive: '2023-05-15',
-            status: 'active',
-            courses: [
-              { id: 1, title: 'Advanced React Development', progress: 85, status: 'in_progress' },
-              { id: 2, title: 'Python for Data Science', progress: 100, status: 'completed' },
-              { id: 3, title: 'UI/UX Design Fundamentals', progress: 100, status: 'completed' }
-            ]
-          },
-          {
-            id: 2,
-            name: 'Jane Smith',
-            email: 'jane.smith@example.com',
-            avatar: 'https://via.placeholder.com/40x40?text=JS',
-            enrolledCourses: 2,
-            completedCourses: 1,
-            totalSpent: 349.98,
-            joinDate: '2023-02-20',
-            lastActive: '2023-05-14',
-            status: 'active',
-            courses: [
-              { id: 2, title: 'Python for Data Science', progress: 92, status: 'in_progress' },
-              { id: 1, title: 'Advanced React Development', progress: 100, status: 'completed' }
-            ]
-          },
-          {
-            id: 3,
-            name: 'Mike Johnson',
-            email: 'mike.johnson@example.com',
-            avatar: 'https://via.placeholder.com/40x40?text=MJ',
-            enrolledCourses: 1,
-            completedCourses: 0,
-            totalSpent: 149.99,
-            joinDate: '2023-04-01',
-            lastActive: '2023-05-10',
-            status: 'active',
-            courses: [
-              { id: 3, title: 'UI/UX Design Fundamentals', progress: 45, status: 'in_progress' }
-            ]
-          },
-          {
-            id: 4,
-            name: 'Sarah Wilson',
-            email: 'sarah.wilson@example.com',
-            avatar: 'https://via.placeholder.com/40x40?text=SW',
-            enrolledCourses: 1,
-            completedCourses: 0,
-            totalSpent: 249.99,
-            joinDate: '2023-03-05',
-            lastActive: '2023-04-20',
-            status: 'inactive',
-            courses: [
-              { id: 2, title: 'Python for Data Science', progress: 78, status: 'in_progress' }
-            ]
-          },
-          {
-            id: 5,
-            name: 'David Brown',
-            email: 'david.brown@example.com',
-            avatar: 'https://via.placeholder.com/40x40?text=DB',
-            enrolledCourses: 0,
-            completedCourses: 0,
-            totalSpent: 0.00,
-            joinDate: '2023-05-01',
-            lastActive: '2023-05-01',
-            status: 'inactive',
-            courses: []
-          }
-        ]
-
-        setStudents(mockStudents)
+        const response = await axios.get('/api/admin/students');
+        setStudents(response.data);
       } catch (err) {
-        console.error('Failed to fetch students data', err)
+        console.error('Failed to fetch students data', err);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
+    };
 
-    fetchStudentsData()
-  }, [router])
+    fetchStudentsData();
+  }, [router]);
 
   const filteredStudents = students.filter(student => {
     const matchesSearch = student.name.toLowerCase().includes(searchTerm.toLowerCase()) ||

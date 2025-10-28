@@ -1,87 +1,37 @@
-import { useEffect, useState } from 'react'
-import { useRouter } from 'next/router'
-import Sidebar from '../../components/Sidebar'
-import axios from 'axios'
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
+import Sidebar from '../../components/Sidebar';
+import axios from 'axios';
 
 export default function AdminMarketplace() {
-  const [courses, setCourses] = useState([])
-  const [subscriptions, setSubscriptions] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [activeTab, setActiveTab] = useState('courses')
-  const router = useRouter()
+  const [courses, setCourses] = useState([]);
+  const [subscriptions, setSubscriptions] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState('courses');
+  const router = useRouter();
 
   useEffect(() => {
-    const token = localStorage.getItem('token')
-    const role = localStorage.getItem('role')
+    const token = localStorage.getItem('token');
+    const role = localStorage.getItem('role');
     if (!token || role !== 'admin') {
-      router.push('/login')
-      return
+      router.push('/login');
+      return;
     }
 
     const fetchMarketplaceData = async () => {
       try {
-        // Mock marketplace data - in real app, this would come from API
-        const mockCourses = [
-          {
-            id: 1,
-            title: 'Advanced React Development',
-            instructor: 'Sarah Johnson',
-            category: 'Web Development',
-            price: 99.99,
-            originalPrice: 149.99,
-            enrolled: 2340,
-            rating: 4.8,
-            status: 'active',
-            lastUpdated: '2023-05-15'
-          },
-          {
-            id: 2,
-            title: 'Python for Data Science',
-            instructor: 'Dr. Michael Chen',
-            category: 'Data Science',
-            price: 129.99,
-            originalPrice: 199.99,
-            enrolled: 1890,
-            rating: 4.9,
-            status: 'active',
-            lastUpdated: '2023-05-14'
-          }
-        ]
-
-        const mockSubscriptions = [
-          {
-            id: 1,
-            name: 'Premium Learning Pass',
-            price: 29.99,
-            period: 'month',
-            subscribers: 1250,
-            revenue: 37497.50,
-            status: 'active',
-            created: '2023-01-15'
-          },
-          {
-            id: 2,
-            name: 'Annual Learning Pass',
-            price: 299.99,
-            period: 'year',
-            subscribers: 450,
-            revenue: 134995.50,
-            status: 'active',
-            created: '2023-02-01'
-          }
-        ]
-
-        setCourses(mockCourses)
-        setSubscriptions(mockSubscriptions)
+        const response = await axios.get('/api/admin/marketplace');
+        setCourses(response.data.courses);
+        setSubscriptions(response.data.subscriptions);
       } catch (err) {
-        console.error('Failed to fetch marketplace data', err)
+        console.error('Failed to fetch marketplace data', err);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
+    };
 
-    fetchMarketplaceData()
-  }, [router])
+    fetchMarketplaceData();
+  }, [router]);
 
   const handleEditCourse = (courseId) => {
     // In real app, this would open edit modal or navigate to edit page

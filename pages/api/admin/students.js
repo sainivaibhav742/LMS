@@ -8,46 +8,40 @@ function readDb() {
   return JSON.parse(dbRaw);
 }
 
+function writeDb(data) {
+  fs.writeFileSync(dbPath, JSON.stringify(data, null, 2));
+}
+
 export default function handler(req, res) {
   const db = readDb();
 
   if (req.method === 'GET') {
-    const { id } = req.query;
-    if (id) {
-      const user = db.users.find(u => u.id === parseInt(id));
-      if (user) {
-        res.status(200).json(user);
-      } else {
-        res.status(404).json({ message: 'User not found' });
-      }
-    } else {
-      res.status(200).json(db.users);
-    }
+    res.status(200).json(db.users.filter(user => user.role === 'student'));
   } else if (req.method === 'PUT') {
     const { id } = req.query;
-    let updatedUser = null;
+    let updatedStudent = null;
     db.users = db.users.map(user => {
-      if (user.id === parseInt(id)) {
-        updatedUser = { ...user, ...req.body };
-        return updatedUser;
+      if (user.id === parseInt(id) && user.role === 'student') {
+        updatedStudent = { ...user, ...req.body };
+        return updatedStudent;
       }
       return user;
     });
-    if (updatedUser) {
+    if (updatedStudent) {
       writeDb(db);
-      res.status(200).json(updatedUser);
+      res.status(200).json(updatedStudent);
     } else {
-      res.status(404).json({ message: 'User not found' });
+      res.status(404).json({ message: 'Student not found' });
     }
   } else if (req.method === 'DELETE') {
     const { id } = req.query;
     const initialLength = db.users.length;
-    db.users = db.users.filter(user => user.id !== parseInt(id));
+    db.users = db.users.filter(user => !(user.id === parseInt(id) && user.role === 'student'));
     if (db.users.length < initialLength) {
       writeDb(db);
-      res.status(200).json({ message: `User ${id} deleted` });
+      res.status(200).json({ message: `Student ${id} deleted` });
     } else {
-      res.status(404).json({ message: 'User not found' });
+      res.status(404).json({ message: 'Student not found' });
     }
   } else {
     res.setHeader('Allow', ['GET', 'PUT', 'DELETE']);

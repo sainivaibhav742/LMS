@@ -1,58 +1,65 @@
-// Mock API for courses
+import fs from 'fs';
+import path from 'path';
+
+const dbPath = path.resolve(process.cwd(), 'pages', 'api', 'db.json');
+
+function readDb() {
+  const dbRaw = fs.readFileSync(dbPath);
+  return JSON.parse(dbRaw);
+}
+
+function writeDb(data) {
+  fs.writeFileSync(dbPath, JSON.stringify(data, null, 2));
+}
+
 export default function handler(req, res) {
+  const db = readDb();
+
   if (req.method === 'GET') {
-    const { id } = req.query
+    const { id } = req.query;
     if (id) {
-      // Return single course
-      const course = {
-        id: parseInt(id),
-        title: 'Introduction to React',
-        progress: 75,
-        thumbnail: 'https://via.placeholder.com/300x200?text=React',
-        category: 'Web Development',
-        description: 'Learn the basics of React, a popular JavaScript library for building user interfaces.',
-        lessons: [
-          { title: 'What is React?', type: 'Video', completed: true },
-          { title: 'Setting up your environment', type: 'Video', completed: true },
-          { title: 'Your first component', type: 'Video', completed: false },
-          { title: 'Props and State', type: 'Video', completed: false },
-          { title: 'React Quiz', type: 'Quiz', completed: false },
-        ],
+      const course = db.courses.find(c => c.id === parseInt(id));
+      if (course) {
+        res.status(200).json(course);
+      } else {
+        res.status(404).json({ message: 'Course not found' });
       }
-      res.status(200).json(course)
     } else {
-      // Mock courses data
-      const courses = [
-        {
-          id: 1,
-          title: 'Introduction to React',
-          progress: 75,
-          thumbnail: 'https://via.placeholder.com/300x200?text=React',
-          category: 'Web Development',
-        },
-        {
-          id: 2,
-          title: 'Advanced JavaScript',
-          progress: 50,
-          thumbnail: 'https://via.placeholder.com/300x200?text=JS',
-          category: 'Programming',
-        },
-        {
-          id: 3,
-          title: 'Data Structures and Algorithms',
-          progress: 30,
-          thumbnail: 'https://via.placeholder.com/300x200?text=DSA',
-          category: 'Computer Science',
-        },
-      ]
-      res.status(200).json(courses)
+      res.status(200).json(db.courses);
     }
   } else if (req.method === 'DELETE') {
-    const { id } = req.query
-    // Mock delete - in real app, this would delete from database
-    res.status(200).json({ message: `Course ${id} deleted` })
+    const { id } = req.query;
+    const initialLength = db.courses.length;
+    db.courses = db.courses.filter(course => course.id !== parseInt(id));
+    if (db.courses.length < initialLength) {
+      writeDb(db);
+      res.status(200).json({ message: `Course ${id} deleted` });
+    } else {
+      res.status(404).json({ message: 'Course not found' });
+    }
+  } else if (req.method === 'POST') {
+    const newCourse = { id: db.courses.length + 1, ...req.body };
+    db.courses.push(newCourse);
+    writeDb(db);
+    res.status(201).json(newCourse);
+  } else if (req.method === 'PUT') {
+    const { id } = req.query;
+    let updatedCourse = null;
+    db.courses = db.courses.map(course => {
+      if (course.id === parseInt(id)) {
+        updatedCourse = { ...course, ...req.body };
+        return updatedCourse;
+      }
+      return course;
+    });
+    if (updatedCourse) {
+      writeDb(db);
+      res.status(200).json(updatedCourse);
+    } else {
+      res.status(404).json({ message: 'Course not found' });
+    }
   } else {
-    res.setHeader('Allow', ['GET', 'DELETE'])
-    res.status(405).end(`Method ${req.method} Not Allowed`)
+    res.setHeader('Allow', ['GET', 'POST', 'PUT', 'DELETE']);
+    res.status(405).end(`Method ${req.method} Not Allowed`);
   }
 }

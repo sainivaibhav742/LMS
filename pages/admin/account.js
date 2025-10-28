@@ -1,74 +1,37 @@
-import { useEffect, useState } from 'react'
-import { useRouter } from 'next/router'
-import Sidebar from '../../components/Sidebar'
-import axios from 'axios'
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
+import Sidebar from '../../components/Sidebar';
+import axios from 'axios';
 
 export default function AdminAccount() {
-  const [profile, setProfile] = useState({})
-  const [loading, setLoading] = useState(true)
-  const [editing, setEditing] = useState(false)
-  const [formData, setFormData] = useState({})
-  const router = useRouter()
+  const [profile, setProfile] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [editing, setEditing] = useState(false);
+  const [formData, setFormData] = useState({});
+  const router = useRouter();
 
   useEffect(() => {
-    const token = localStorage.getItem('token')
-    const role = localStorage.getItem('role')
+    const token = localStorage.getItem('token');
+    const role = localStorage.getItem('role');
     if (!token || role !== 'admin') {
-      router.push('/login')
-      return
+      router.push('/login');
+      return;
     }
 
     const fetchProfile = async () => {
       try {
-        // Mock admin profile data - in real app, this would come from API
-        const mockProfile = {
-          id: 1,
-          name: 'Alex Thompson',
-          email: 'admin@lms-platform.com',
-          bio: 'Platform administrator with 8+ years of experience in educational technology and system management. Passionate about creating scalable learning solutions.',
-          avatar: 'https://via.placeholder.com/150x150?text=AT',
-          role: 'Platform Administrator',
-          department: 'Technology & Operations',
-          joinDate: '2020-03-15',
-          lastLogin: '2023-05-15T09:30:00Z',
-          permissions: [
-            'User Management',
-            'Course Oversight',
-            'Financial Administration',
-            'System Configuration',
-            'Analytics & Reporting',
-            'Content Moderation'
-          ],
-          contactInfo: {
-            phone: '+1 (555) 123-4567',
-            emergency: '+1 (555) 987-6543',
-            address: '123 Tech Street, Silicon Valley, CA 94025'
-          },
-          systemStats: {
-            totalLogins: 1247,
-            actionsPerformed: 3456,
-            reportsGenerated: 89,
-            uptime: '99.9%'
-          },
-          securitySettings: {
-            twoFactorEnabled: true,
-            lastPasswordChange: '2023-04-01',
-            loginAlerts: true,
-            sessionTimeout: '8 hours'
-          }
-        }
-
-        setProfile(mockProfile)
-        setFormData(mockProfile)
+        const response = await axios.get('/api/admin/account');
+        setProfile(response.data);
+        setFormData(response.data);
       } catch (err) {
-        console.error('Failed to fetch profile', err)
+        console.error('Failed to fetch profile', err);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
+    };
 
-    fetchProfile()
-  }, [router])
+    fetchProfile();
+  }, [router]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target

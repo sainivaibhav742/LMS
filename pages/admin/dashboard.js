@@ -1,87 +1,38 @@
-import { useEffect, useState } from 'react'
-import { useRouter } from 'next/router'
-import Sidebar from '../../components/Sidebar'
-import Header from '../../components/Header'
-import axios from 'axios'
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
+import Sidebar from '../../components/Sidebar';
+import Header from '../../components/Header';
+import axios from 'axios';
 
 export default function AdminDashboard() {
-  const [stats, setStats] = useState({})
-  const [recentActivity, setRecentActivity] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
-  const router = useRouter()
+  const [stats, setStats] = useState({});
+  const [recentActivity, setRecentActivity] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
-    const token = localStorage.getItem('token')
-    const role = localStorage.getItem('role')
+    const token = localStorage.getItem('token');
+    const role = localStorage.getItem('role');
     if (!token || role !== 'admin') {
-      router.push('/login')
-      return
+      router.push('/login');
+      return;
     }
 
     const fetchDashboardData = async () => {
       try {
-        // Mock dashboard data - in real app, this would come from API
-        const mockStats = {
-          totalUsers: 3456,
-          totalStudents: 2890,
-          totalInstructors: 45,
-          totalCourses: 156,
-          totalRevenue: 45678.90,
-          activeSubscriptions: 1234,
-          monthlyGrowth: 12.5,
-          avgRating: 4.6
-        }
-
-        const mockActivity = [
-          {
-            id: 1,
-            type: 'user_registration',
-            message: 'New instructor "Dr. Michael Chen" registered',
-            time: '2 hours ago',
-            icon: '👨‍🏫'
-          },
-          {
-            id: 2,
-            type: 'course_published',
-            message: 'Course "Machine Learning Basics" published by Sarah Johnson',
-            time: '4 hours ago',
-            icon: '📚'
-          },
-          {
-            id: 3,
-            type: 'payment',
-            message: 'Payment of $299 received from student@example.com',
-            time: '6 hours ago',
-            icon: '💰'
-          },
-          {
-            id: 4,
-            type: 'subscription',
-            message: 'Monthly subscription renewed for 25 students',
-            time: '8 hours ago',
-            icon: '🔄'
-          },
-          {
-            id: 5,
-            type: 'report',
-            message: 'Weekly analytics report generated',
-            time: '1 day ago',
-            icon: '📊'
-          }
-        ]
-
-        setStats(mockStats)
-        setRecentActivity(mockActivity)
+        const response = await axios.get('/api/admin/dashboard');
+        setStats(response.data.stats);
+        setRecentActivity(response.data.recentActivity);
       } catch (err) {
-        console.error('Failed to fetch dashboard data', err)
+        console.error('Failed to fetch dashboard data', err);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
+    };
 
-    fetchDashboardData()
-  }, [router])
+    fetchDashboardData();
+  }, [router]);
 
   if (loading) return <div>Loading...</div>
 

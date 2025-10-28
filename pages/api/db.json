@@ -1,0 +1,349 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "name": "John Doe",
+      "email": "student@example.com",
+      "password": "student",
+      "role": "student",
+      "enrolledCourses": [1, 2],
+      "completedCourses": [2],
+      "totalSpent": 499.97,
+      "joinDate": "2023-01-15",
+      "lastActive": "2023-05-15",
+      "status": "active",
+      "avatar": "https://via.placeholder.com/40x40?text=JD"
+    },
+    {
+      "id": 2,
+      "name": "Jane Smith",
+      "email": "student2@example.com",
+      "password": "student",
+      "role": "student",
+      "enrolledCourses": [1],
+      "completedCourses": [],
+      "totalSpent": 349.98,
+      "joinDate": "2023-02-20",
+      "lastActive": "2023-05-14",
+      "status": "active",
+      "avatar": "https://via.placeholder.com/40x40?text=JS"
+    },
+    {
+      "id": 3,
+      "name": "Admin User",
+      "email": "admin@example.com",
+      "password": "admin",
+      "role": "admin",
+      "enrolledCourses": [],
+      "completedCourses": [],
+      "totalSpent": 0,
+      "joinDate": "2020-03-15",
+      "lastActive": "2023-05-15T09:30:00Z",
+      "status": "active",
+      "avatar": "https://via.placeholder.com/150x150?text=AT",
+      "bio": "Platform administrator with 8+ years of experience in educational technology and system management. Passionate about creating scalable learning solutions.",
+      "department": "Technology & Operations",
+      "permissions": [
+        "User Management",
+        "Course Oversight",
+        "Financial Administration",
+        "System Configuration",
+        "Analytics & Reporting",
+        "Content Moderation"
+      ],
+      "contactInfo": {
+        "phone": "+1 (555) 123-4567",
+        "emergency": "+1 (555) 987-6543",
+        "address": "123 Tech Street, Silicon Valley, CA 94025"
+      },
+      "systemStats": {
+        "totalLogins": 1247,
+        "actionsPerformed": 3456,
+        "reportsGenerated": 89,
+        "uptime": "99.9%"
+      },
+      "securitySettings": {
+        "twoFactorEnabled": true,
+        "lastPasswordChange": "2023-04-01",
+        "loginAlerts": true,
+        "sessionTimeout": "8 hours"
+      }
+    },
+    {
+      "id": 4,
+      "name": "Instructor User",
+      "email": "instructor@example.com",
+      "password": "instructor",
+      "role": "instructor",
+      "enrolledCourses": [],
+      "completedCourses": [],
+      "totalSpent": 0,
+      "joinDate": "2022-01-01",
+      "lastActive": "2023-05-15",
+      "status": "active",
+      "avatar": "https://via.placeholder.com/40x40?text=IU"
+    }
+  ],
+  "courses": [
+    {
+      "id": 1,
+      "title": "Advanced React Development",
+      "category": "Web Development",
+      "instructor": "Dr. Sarah Johnson",
+      "instructorId": 1,
+      "students": 234,
+      "rating": 4.8,
+      "reviews": 89,
+      "revenue": 4680.00,
+      "status": "published",
+      "price": 199.99,
+      "originalPrice": 249.99,
+      "lastUpdated": "2023-05-15",
+      "thumbnail": "https://via.placeholder.com/300x200?text=React+Advanced",
+      "description": "Learn advanced React concepts and build complex applications.",
+      "lessons": [
+        { "title": "React Hooks Deep Dive", "type": "Video", "completed": true },
+        { "title": "Context API and Redux", "type": "Video", "completed": true },
+        { "title": "Performance Optimization", "type": "Video", "completed": false },
+        { "title": "Testing React Applications", "type": "Video", "completed": false },
+        { "title": "Advanced React Quiz", "type": "Quiz", "completed": false }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "Python for Data Science",
+      "category": "Data Science",
+      "instructor": "Dr. Michael Chen",
+      "instructorId": 2,
+      "students": 189,
+      "rating": 4.9,
+      "reviews": 67,
+      "revenue": 3771.00,
+      "status": "published",
+      "price": 249.99,
+      "originalPrice": 299.99,
+      "lastUpdated": "2023-05-14",
+      "thumbnail": "https://via.placeholder.com/300x200?text=Python+Data+Science",
+      "description": "Master Python for data analysis, machine learning, and data visualization.",
+      "lessons": [
+        { "title": "Numpy and Pandas", "type": "Video", "completed": true },
+        { "title": "Data Cleaning and Preprocessing", "type": "Video", "completed": true },
+        { "title": "Machine Learning Algorithms", "type": "Video", "completed": false },
+        { "title": "Data Visualization with Matplotlib", "type": "Video", "completed": false },
+        { "title": "Data Science Project", "type": "Project", "completed": false }
+      ]
+    },
+    {
+      "id": 3,
+      "title": "UI/UX Design Fundamentals",
+      "category": "Design",
+      "instructor": "Dr. Sarah Johnson",
+      "instructorId": 1,
+      "students": 145,
+      "rating": 4.7,
+      "reviews": 45,
+      "revenue": 2175.00,
+      "status": "published",
+      "price": 149.99,
+      "originalPrice": 199.99,
+      "lastUpdated": "2023-05-10",
+      "thumbnail": "https://via.placeholder.com/300x200?text=UI+UX+Design",
+      "description": "Learn the principles of UI/UX design and create user-friendly interfaces.",
+      "lessons": [
+        { "title": "Introduction to UI/UX", "type": "Video", "completed": true },
+        { "title": "User Research and Personas", "type": "Video", "completed": true },
+        { "title": "Wireframing and Prototyping", "type": "Video", "completed": false },
+        { "title": "Usability Testing", "type": "Video", "completed": false },
+        { "title": "Design Project", "type": "Project", "completed": false }
+      ]
+    },
+    {
+      "id": 4,
+      "title": "Machine Learning Basics",
+      "category": "Data Science",
+      "instructor": "Dr. Emily Rodriguez",
+      "instructorId": 3,
+      "students": 0,
+      "rating": 0,
+      "reviews": 0,
+      "revenue": 0.00,
+      "status": "pending_review",
+      "price": 299.99,
+      "originalPrice": 349.99,
+      "lastUpdated": "2023-05-12",
+      "thumbnail": "https://via.placeholder.com/300x200?text=Machine+Learning",
+      "description": "An introduction to the core concepts and algorithms of machine learning.",
+      "lessons": []
+    },
+    {
+      "id": 5,
+      "title": "Cloud Computing with AWS",
+      "category": "Cloud Computing",
+      "instructor": "Prof. David Kim",
+      "instructorId": 4,
+      "students": 0,
+      "rating": 0,
+      "reviews": 0,
+      "revenue": 0.00,
+      "status": "draft",
+      "price": 349.99,
+      "originalPrice": 399.99,
+      "lastUpdated": "2023-05-08",
+      "thumbnail": "https://via.placeholder.com/300x200?text=AWS+Cloud",
+      "description": "Learn to deploy and manage applications on Amazon Web Services.",
+      "lessons": []
+    }
+  ],
+  "instructors": [
+    { "id": 1, "name": "Dr. Sarah Johnson", "email": "sarah.johnson@example.com" },
+    { "id": 2, "name": "Dr. Michael Chen", "email": "michael.chen@example.com" },
+    { "id": 3, "name": "Dr. Emily Rodriguez", "email": "emily.rodriguez@example.com" },
+    { "id": 4, "name": "Prof. David Kim", "email": "david.kim@example.com" }
+  ],
+  "payments": [
+    {
+      "id": 1,
+      "transactionId": "TXN_001234",
+      "student": "John Doe",
+      "studentEmail": "john.doe@example.com",
+      "course": "Advanced React Development",
+      "instructor": "Dr. Sarah Johnson",
+      "amount": 199.99,
+      "platformFee": 39.99,
+      "instructorShare": 160.00,
+      "status": "completed",
+      "paymentMethod": "Credit Card",
+      "date": "2023-05-15T10:30:00Z",
+      "refundable": true
+    },
+    {
+      "id": 2,
+      "transactionId": "TXN_001235",
+      "student": "Jane Smith",
+      "studentEmail": "jane.smith@example.com",
+      "course": "Python for Data Science",
+      "instructor": "Dr. Michael Chen",
+      "amount": 249.99,
+      "platformFee": 49.99,
+      "instructorShare": 200.00,
+      "status": "completed",
+      "paymentMethod": "PayPal",
+      "date": "2023-05-14T14:20:00Z",
+      "refundable": true
+    },
+    {
+      "id": 3,
+      "transactionId": "TXN_001236",
+      "student": "Mike Johnson",
+      "studentEmail": "mike.johnson@example.com",
+      "course": "UI/UX Design Fundamentals",
+      "instructor": "Dr. Sarah Johnson",
+      "amount": 149.99,
+      "platformFee": 29.99,
+      "instructorShare": 120.00,
+      "status": "completed",
+      "paymentMethod": "Credit Card",
+      "date": "2023-05-13T09:15:00Z",
+      "refundable": true
+    },
+    {
+      "id": 4,
+      "transactionId": "TXN_001237",
+      "student": "Sarah Wilson",
+      "studentEmail": "sarah.wilson@example.com",
+      "course": "Python for Data Science",
+      "instructor": "Dr. Michael Chen",
+      "amount": 249.99,
+      "platformFee": 49.99,
+      "instructorShare": 200.00,
+      "status": "refunded",
+      "paymentMethod": "Credit Card",
+      "date": "2023-05-12T16:45:00Z",
+      "refundable": false
+    },
+    {
+      "id": 5,
+      "transactionId": "TXN_001238",
+      "student": "David Brown",
+      "studentEmail": "david.brown@example.com",
+      "course": "Cloud Computing with AWS",
+      "instructor": "Prof. David Kim",
+      "amount": 349.99,
+      "platformFee": 69.99,
+      "instructorShare": 280.00,
+      "status": "pending",
+      "paymentMethod": "Bank Transfer",
+      "date": "2023-05-11T11:30:00Z",
+      "refundable": false
+    }
+  ],
+  "dashboardStats": {
+    "totalUsers": 3456,
+    "totalStudents": 2890,
+    "totalInstructors": 45,
+    "totalCourses": 156,
+    "totalRevenue": 45678.90,
+    "activeSubscriptions": 1234,
+    "monthlyGrowth": 12.5,
+    "avgRating": 4.6
+  },
+  "recentActivity": [
+    {
+      "id": 1,
+      "type": "user_registration",
+      "message": "New instructor \"Dr. Michael Chen\" registered",
+      "time": "2 hours ago",
+      "icon": "👨‍🏫"
+    },
+    {
+      "id": 2,
+      "type": "course_published",
+      "message": "Course \"Machine Learning Basics\" published by Sarah Johnson",
+      "time": "4 hours ago",
+      "icon": "📚"
+    },
+    {
+      "id": 3,
+      "type": "payment",
+      "message": "Payment of $299 received from student@example.com",
+      "time": "6 hours ago",
+      "icon": "💰"
+    },
+    {
+      "id": 4,
+      "type": "subscription",
+      "message": "Monthly subscription renewed for 25 students",
+      "time": "8 hours ago",
+      "icon": "🔄"
+    },
+    {
+      "id": 5,
+      "type": "report",
+      "message": "Weekly analytics report generated",
+      "time": "1 day ago",
+      "icon": "📊"
+    }
+  ],
+  "subscriptions": [
+    {
+      "id": 1,
+      "name": "Premium Learning Pass",
+      "price": 29.99,
+      "period": "month",
+      "subscribers": 1250,
+      "revenue": 37497.50,
+      "status": "active",
+      "created": "2023-01-15"
+    },
+    {
+      "id": 2,
+      "name": "Annual Learning Pass",
+      "price": 299.99,
+      "period": "year",
+      "subscribers": 450,
+      "revenue": 134995.50,
+      "status": "active",
+      "created": "2023-02-01"
+    }
+  ]
+}

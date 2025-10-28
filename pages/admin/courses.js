@@ -1,124 +1,39 @@
-import { useEffect, useState } from 'react'
-import { useRouter } from 'next/router'
-import Sidebar from '../../components/Sidebar'
-import axios from 'axios'
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
+import Sidebar from '../../components/Sidebar';
+import axios from 'axios';
 
 export default function AdminCourses() {
-  const [courses, setCourses] = useState([])
-  const [instructors, setInstructors] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [activeTab, setActiveTab] = useState('all')
-  const [selectedInstructor, setSelectedInstructor] = useState('all')
-  const router = useRouter()
+  const [courses, setCourses] = useState([]);
+  const [instructors, setInstructors] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState('all');
+  const [selectedInstructor, setSelectedInstructor] = useState('all');
+  const router = useRouter();
 
   useEffect(() => {
-    const token = localStorage.getItem('token')
-    const role = localStorage.getItem('role')
+    const token = localStorage.getItem('token');
+    const role = localStorage.getItem('role');
     if (!token || role !== 'admin') {
-      router.push('/login')
-      return
+      router.push('/login');
+      return;
     }
 
     const fetchCoursesData = async () => {
       try {
-        // Mock courses data - in real app, this would come from API
-        const mockCourses = [
-          {
-            id: 1,
-            title: 'Advanced React Development',
-            category: 'Web Development',
-            instructor: 'Dr. Sarah Johnson',
-            instructorId: 1,
-            students: 234,
-            rating: 4.8,
-            reviews: 89,
-            revenue: 4680.00,
-            status: 'published',
-            price: 199.99,
-            lastUpdated: '2023-05-15',
-            thumbnail: 'https://via.placeholder.com/300x200?text=React+Advanced'
-          },
-          {
-            id: 2,
-            title: 'Python for Data Science',
-            category: 'Data Science',
-            instructor: 'Dr. Michael Chen',
-            instructorId: 2,
-            students: 189,
-            rating: 4.9,
-            reviews: 67,
-            revenue: 3771.00,
-            status: 'published',
-            price: 249.99,
-            lastUpdated: '2023-05-14',
-            thumbnail: 'https://via.placeholder.com/300x200?text=Python+Data+Science'
-          },
-          {
-            id: 3,
-            title: 'UI/UX Design Fundamentals',
-            category: 'Design',
-            instructor: 'Dr. Sarah Johnson',
-            instructorId: 1,
-            students: 145,
-            rating: 4.7,
-            reviews: 45,
-            revenue: 2175.00,
-            status: 'published',
-            price: 149.99,
-            lastUpdated: '2023-05-10',
-            thumbnail: 'https://via.placeholder.com/300x200?text=UI+UX+Design'
-          },
-          {
-            id: 4,
-            title: 'Machine Learning Basics',
-            category: 'Data Science',
-            instructor: 'Dr. Emily Rodriguez',
-            instructorId: 3,
-            students: 0,
-            rating: 0,
-            reviews: 0,
-            revenue: 0.00,
-            status: 'pending_review',
-            price: 299.99,
-            lastUpdated: '2023-05-12',
-            thumbnail: 'https://via.placeholder.com/300x200?text=Machine+Learning'
-          },
-          {
-            id: 5,
-            title: 'Cloud Computing with AWS',
-            category: 'Cloud Computing',
-            instructor: 'Prof. David Kim',
-            instructorId: 4,
-            students: 0,
-            rating: 0,
-            reviews: 0,
-            revenue: 0.00,
-            status: 'draft',
-            price: 349.99,
-            lastUpdated: '2023-05-08',
-            thumbnail: 'https://via.placeholder.com/300x200?text=AWS+Cloud'
-          }
-        ]
-
-        const mockInstructors = [
-          { id: 'all', name: 'All Instructors' },
-          { id: 1, name: 'Dr. Sarah Johnson' },
-          { id: 2, name: 'Dr. Michael Chen' },
-          { id: 3, name: 'Dr. Emily Rodriguez' },
-          { id: 4, name: 'Prof. David Kim' }
-        ]
-
-        setCourses(mockCourses)
-        setInstructors(mockInstructors)
+        const coursesResponse = await axios.get('/api/courses');
+        const instructorsResponse = await axios.get('/api/admin/marketplace?type=instructor'); // Assuming an API for instructors
+        setCourses(coursesResponse.data);
+        setInstructors([{ id: 'all', name: 'All Instructors' }, ...instructorsResponse.data.instructors]);
       } catch (err) {
-        console.error('Failed to fetch courses data', err)
+        console.error('Failed to fetch courses data', err);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
+    };
 
-    fetchCoursesData()
-  }, [router])
+    fetchCoursesData();
+  }, [router]);
 
   const filteredCourses = courses.filter(course => {
     const statusMatch = activeTab === 'all' ||
@@ -131,23 +46,44 @@ export default function AdminCourses() {
     return statusMatch && instructorMatch
   })
 
-  const handleApproveCourse = (courseId) => {
-    setCourses(courses.map(course =>
-      course.id === courseId
-        ? { ...course, status: 'published' }
-        : course
-    ))
-  }
-
-  const handleRejectCourse = (courseId) => {
-    if (confirm('Are you sure you want to reject this course?')) {
-      setCourses(courses.filter(course => course.id !== courseId))
+  const handleApproveCourse = async (courseId) => {
+    try {
+      const response = await axios.put(`/api/courses?id=${courseId}`, { status: 'published' });
+      if (response.status === 200) {
+        setCourses(courses.map(course =>
+          course.id === courseId
+            ? { ...course, status: 'published' }
+            : course
+        ));
+      }
+    } catch (err) {
+      console.error('Failed to approve course', err);
     }
   }
 
-  const handleDeleteCourse = (courseId) => {
+  const handleRejectCourse = async (courseId) => {
+    if (confirm('Are you sure you want to reject this course?')) {
+      try {
+        const response = await axios.delete(`/api/courses?id=${courseId}`);
+        if (response.status === 200) {
+          setCourses(courses.filter(course => course.id !== courseId));
+        }
+      } catch (err) {
+        console.error('Failed to reject course', err);
+      }
+    }
+  }
+
+  const handleDeleteCourse = async (courseId) => {
     if (confirm('Are you sure you want to delete this course?')) {
-      setCourses(courses.filter(course => course.id !== courseId))
+      try {
+        const response = await axios.delete(`/api/courses?id=${courseId}`);
+        if (response.status === 200) {
+          setCourses(courses.filter(course => course.id !== courseId));
+        }
+      } catch (err) {
+        console.error('Failed to delete course', err);
+      }
     }
   }
 
